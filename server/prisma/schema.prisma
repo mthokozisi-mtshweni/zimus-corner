@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")            // Pooled connection
+  directUrl = env("DIRECT_URL")  // Direct connection (changed to match Neon)
+}
+
+// ==========================================
+// ACCOMMODATION
+// ==========================================
+
+model RoomType {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String
+  price       Int       // Stored in cents (e.g., R150 = 15000)
+  capacity    Int       // Max guests per room
+  inventory   Int       // Number of physical rooms available
+  imageKeys   String[]  // Array of image keys (e.g., ["pool1", "garden1"])
+  isPublished Boolean   @default(false)
+
+  bookings    Booking[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id          String    @id @default(uuid())
+  reference   String    @unique // e.g., "ZIM-ROOM-1234"
+  guestName   String
+  guestEmail  String
+  guestPhone  String
+  
+  checkIn     DateTime
+  checkOut    DateTime
+  totalAmount Int       // Snapshot of price at time of booking
+  
+  status      BookingStatus @default(PENDING)
+  
+  roomTypeId  String
+  roomType    RoomType  @relation(fields: [roomTypeId], references: [id])
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+// ==========================================
+// EVENTS & TICKETING
+// ==========================================
+
+model Event {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  date        String    // e.g., "Saturday, 25th December"
+  time        String    // e.g., "12:00 PM - Late"
+  imageKey    String
+  isPublished Boolean   @default(false)
+
+  tickets     TicketType[]
+  orders      TicketOrder[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TicketType {
+  id          String    @id @default(uuid())
+  name        String    // e.g., "VIP Adult", "General Child", "Cooler Box"
+  price       Int       // Stored in cents (e.g., R80 = 8000)
+  capacity    Int       // Max tickets available
+  sold        Int       @default(0) // Track how many are sold
+  
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id])
+  
+  orderItems  TicketOrderItem[]
+}
+
+model TicketOrder {
+  id          String    @id @default(uuid())
+  reference   String    @unique // e.g., "ZIM-TIX-1234"
+  guestName   String
+  guestEmail  String
+  guestPhone  String
+  
+  totalAmount Int       // Total price paid
+  status      TicketOrderStatus @default(PENDING)
+  
+  eventId     String
+  event       Event     @relation(fields: [eventId], references: [id])
+  
+  items       TicketOrderItem[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TicketOrderItem {
+  id           String     @id @default(uuid())
+  quantity     Int
+  priceAtSale  Int        // Snapshot of price at time of purchase
+  
+  ticketTypeId String
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id])
+  
+  orderId      String
+  order        TicketOrder @relation(fields: [orderId], references: [id])
+}
+
+enum TicketOrderStatus {
+  PENDING
+  PAID       // Non-refundable, so we don't have a REFUNDED status
+  CANCELLED
+}
+
+
+// ==========================================
+// ADMIN & AUTHENTICATION
+// ==========================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // Hashed password
+  name      String
+  role      String   @default("STAFF") // OWNER, MANAGER, STAFF
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

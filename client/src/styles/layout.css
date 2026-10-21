@@ -1,0 +1,200 @@
+/* ============================================================
+   HEADER & NAVIGATION
+   ============================================================ */
+
+/* Desktop Nav Links */
+.nav-link {
+  color: var(--ivory);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+  opacity: 0.85;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--gold);
+  opacity: 1;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: var(--gold);
+  opacity: 1;
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Plan Your Visit Button */
+.nav-book-btn {
+  background: var(--gold);
+  color: var(--forest);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.nav-book-btn:hover {
+  transform: translateY(-2px);
+  background: #e5b34a;
+}
+
+/* ============================================================
+   MOBILE SIDE DRAWER & BLUR OVERLAY
+   ============================================================ */
+
+/* The blurred backdrop covering the whole screen */
+.mobile-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 26, 23, 0.6); /* Dark tint */
+  backdrop-filter: blur(8px); /* The blur effect */
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.mobile-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The side drawer itself */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 85%;
+  max-width: 350px;
+  height: 100vh;
+  background: var(--forest);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%); /* Starts off-screen to the right */
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smooth sliding */
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+.mobile-drawer.open {
+  transform: translateX(0); /* Slides in */
+}
+
+/* Drawer Header (Logo & Close Button) */
+.mobile-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(245, 240, 231, 0.1);
+}
+
+.mobile-drawer-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: var(--ivory);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.mobile-drawer-close:hover {
+  background: var(--gold);
+  color: var(--forest);
+}
+
+/* Drawer Links */
+.mobile-drawer-links {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.mobile-nav-link {
+  display: block;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(245, 240, 231, 0.1);
+  color: var(--ivory);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.mobile-nav-link:hover, 
+.mobile-nav-link.active {
+  color: var(--gold);
+  padding-left: 0.5rem;
+}
+
+/* Drawer Footer (Plan Visit Button) */
+.mobile-drawer-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(245, 240, 231, 0.1);
+}
+
+.mobile-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: var(--gold);
+  color: var(--forest);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: transform 0.2s ease;
+}
+
+.mobile-nav-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Show/Hide logic */
+@media (max-width: 860px) {
+  .desktop-nav { display: none !important; }
+  .mobile-toggle { display: flex !important; }
+}
+
+@media (min-width: 861px) {
+  .mobile-drawer, 
+  .mobile-drawer-overlay { 
+    display: none !important; 
+  }
+}
