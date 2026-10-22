@@ -295,3 +295,16 @@
   .event-body { padding: 1.25rem; }
   .featured-event-body { padding: 1.5rem; }
 }
+
+/* Add this to the bottom of events.css */
+@media (max-width: 768px) {
+  .events-hero {
+    padding: 5rem 1rem 3rem !important;
+  }
+  .events-section {
+    padding: 3rem 0 4rem !important;
+  }
+  .featured-event-section {
+    padding: 3rem 0 1rem !important;
+  }
+}

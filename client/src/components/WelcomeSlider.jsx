@@ -4,10 +4,29 @@ export default function WelcomeSlider({ media }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRefs = useRef([]);
 
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 50) setCurrentIndex((prev) => (prev + 1) % media.length);
+    if (diff < -50) setCurrentIndex((prev) => (prev - 1 + media.length) % media.length);
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   // Auto-play functionality
   useEffect(() => {
     const currentMedia = media[currentIndex];
-    // Give videos a bit more time (10s) than images (5s)
     const duration = currentMedia.type === "video" ? 10000 : 5000;
 
     const timer = setInterval(() => {
@@ -17,15 +36,13 @@ export default function WelcomeSlider({ media }) {
     return () => clearInterval(timer);
   }, [currentIndex, media]);
 
-  // Play/Pause videos based on whether they are the active slide
+  // Play/Pause videos based on active slide
   useEffect(() => {
     videoRefs.current.forEach((video, index) => {
       if (video) {
         if (index === currentIndex) {
-          // Play the active video
           video.play().catch((e) => console.log("Auto-play blocked:", e));
         } else {
-          // Pause and reset inactive videos
           video.pause();
           video.currentTime = 0;
         }
@@ -34,9 +51,13 @@ export default function WelcomeSlider({ media }) {
   }, [currentIndex]);
 
   return (
-    <div className="welcome-slider-container">
+    <div
+      className="welcome-slider-container"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {media.map((item, index) => {
-        // If the item is a video
         if (item.type === "video") {
           return (
             <video
@@ -50,7 +71,6 @@ export default function WelcomeSlider({ media }) {
             />
           );
         }
-        // If the item is an image
         return (
           <img
             key={index}
@@ -60,7 +80,7 @@ export default function WelcomeSlider({ media }) {
           />
         );
       })}
-      
+
       {/* Navigation Dots */}
       <div className="welcome-slider-dots">
         {media.map((_, index) => (

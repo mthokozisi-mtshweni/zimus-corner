@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
+// If VITE_API_URL is missing, default to the live Render backend
+const API_URL = import.meta.env.VITE_API_URL || "https://zimus-corner.onrender.com/api/v1";
 
 export const fetchRooms = async () => {
   const res = await fetch(`${API_URL}/rooms`);

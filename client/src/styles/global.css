@@ -1,6 +1,5 @@
 /* ============================================================
    ZIMU’S CORNER — DESIGN TOKENS
-   Centralised so the brand can be updated in one place.
    ============================================================ */
 :root {
   --forest: #101a17;
@@ -11,6 +10,8 @@
 
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif; /* Changed to Fraunces */
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
 
   --space-xs: 0.5rem;
   --space-sm: 1rem;
@@ -23,7 +24,11 @@
 
   --shadow-soft: 0 8px 30px rgba(16, 26, 23, 0.08);
   --transition: 200ms ease;
+
+   --header-height: 76px;
 }
+
+/* Note: We removed `* { max-width: 100% }` because it breaks the mobile drawer sliding */
 
 *,
 *::before,
@@ -33,7 +38,8 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden; /* Prevents horizontal scrolling */
+  width: 100%;
+  overflow-x: clip; /* Use clip instead of hidden to keep sticky header working */
 }
 
 body {
@@ -43,8 +49,15 @@ body {
   background: var(--ivory);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  overflow-x: clip; /* Prevents horizontal scrolling */
   width: 100%;
+  overflow-x: clip;
+}
+
+/* THE ULTIMATE SAFETY NET */
+#root {
+  overflow-x: clip;
+  width: 100%;
+  position: relative;
 }
 
 h1, h2, h3, h4 {
@@ -88,4 +101,35 @@ button {
 .container {
   width: min(1120px, 100% - 2rem);
   margin-inline: auto;
+}
+
+/* ============================================================
+   GLOBAL RESPONSIVE SPACING
+   ============================================================ */
+.section-pad {
+  padding: 6rem 0;
+}
+
+@media (max-width: 768px) {
+  .section-pad {
+    padding: 4rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-pad {
+    padding: 3rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-image-border { 
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 64px; /* Mobile header is shorter */
+  }
 }

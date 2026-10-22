@@ -1,25 +1,23 @@
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, MapPin, BedDouble, Sparkles, Music,
   Waves, Flame, Castle, Play, Leaf, Calendar, Droplets, ArrowUp,
-   Users, Smile, Package,  Phone, Mail, Quote 
+  Users, Smile, Package, Phone, Mail, Quote, Check, Star,
+  ChevronDown, X, Heart
 } from "lucide-react";
 import { images } from "../../assets/imageImports";
 import {
-  resortInfo, dayVisitPricing, includedFacilities, experiences, galleryImages, guestReviews, homeExperiences 
+  resortInfo, dayVisitPricing, includedFacilities, experiences,
+  galleryImages, guestReviews, roomTypes, homeExperiences
 } from "../../constants/siteData";
 import Reveal from "../../components/Reveal";
 import ImageCarousel from "../../components/ImageCarousel";
-
-import { Check, Star } from "lucide-react";
 import RoomGallery from "../../components/RoomGallery";
-import "../../styles/rooms.css";
-import "../../styles/home.css";
-
-import { useState, useEffect } from "react";
-// import { fetchRooms } from "../../services/api";
 import WelcomeSlider from "../../components/WelcomeSlider";
 import { fetchRooms, fetchEvents } from "../../services/api";
+import "../../styles/rooms.css";
+import "../../styles/home.css";
 
 const iconMap = {
   waves: Waves, droplets: Droplets, flame: Flame, castle: Castle,
@@ -37,6 +35,73 @@ export default function HomePage() {
 
   const [homeRooms, setHomeRooms] = useState([]);
 
+    // Contact modal state
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+
+
+    const expCardRefs = useRef([]);
+
+  // Mobile: play only the video that's centered in the viewport
+  useEffect(() => {
+    const isMobile = window.matchMedia("(max-width: 900px)").matches;
+    if (!isMobile || !homeExperiences?.length) return;
+
+    const observers = [];
+
+    expCardRefs.current.forEach((el) => {
+      if (!el) return;
+      const video = el.querySelector("video");
+      if (!video || !video.src) return;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            // Play THIS video, mark card as in-view
+            video.play().catch(() => {});
+            el.classList.add("in-view");
+          } else {
+            // Pause and reset
+            video.pause();
+            video.currentTime = 0;
+            el.classList.remove("in-view");
+          }
+        },
+        {
+          root: null,
+          // Only trigger when card is within the middle 20% of viewport
+          rootMargin: "-40% 0px -40% 0px",
+          threshold: 0,
+        }
+      );
+
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, [homeExperiences]);
+
+  // Escape key handler to close the modal
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") setContactModalOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Lock body scroll while modal is open
+  useEffect(() => {
+    if (contactModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [contactModalOpen]);
+
   useEffect(() => {
     // Fetch rooms from the database and grab the first 3
     fetchRooms()
@@ -49,102 +114,56 @@ export default function HomePage() {
 
   return (
     <>
+           
             {/* HERO WITH CINEMATIC VIDEO */}
-      {/* <section
-        style={{
-          position: "relative",
-          minHeight: "100vh", // Made slightly taller for a more cinematic feel
-          display: "flex",
-          alignItems: "center",
-          color: "var(--ivory)",
-          overflow: "hidden",
-          background: "var(--forest)", // Fallback color while video loads
-        }}
-      >
-      
-       <video
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
-  poster={images.pool3}
-  style={{
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-    transform: "translate(-50%, -50%)",
-    zIndex: 0,
-  }}
-  className="hero-video"
->
- <source src="/hero-video.mp4" type="video/mp4" />
-</video>
-
-       
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(90deg, rgba(16,26,23,0.9) 0%, rgba(16,26,23,0.4) 60%, rgba(16,26,23,0.1) 100%)",
-            zIndex: 1,
-          }}
-        />
-
-        <div className="container" style={{ position: "relative", zIndex: 2, padding: "6rem 0" }}>
-          <Reveal direction="up">
-            <p style={{ color: "var(--gold)", letterSpacing: "0.2em", textTransform: "uppercase", fontSize: "0.85rem", marginBottom: "1rem" }}>
-              {resortInfo.location}
-            </p>
-            <h1 style={{ fontSize: "clamp(3rem, 6vw, 5.5rem)", maxWidth: "14ch", lineHeight: 1.1, textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
-              {resortInfo.tagline}
-            </h1>
-            <p style={{ maxWidth: "52ch", fontSize: "1.15rem", opacity: 0.95, marginBottom: "2.5rem", textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}>
-              {resortInfo.description}
-            </p>
-            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-              <Link to="/contact" style={{ background: "var(--gold)", color: "var(--forest)", padding: "1rem 2rem", borderRadius: "var(--radius-sm)", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: "0.5rem", transition: "transform 0.2s ease" }} onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"} onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
-                Plan Your Visit <ArrowRight size={18} />
-              </Link>
-              <Link to="/experiences" style={{ border: "1px solid var(--ivory)", color: "var(--ivory)", padding: "1rem 2rem", borderRadius: "var(--radius-sm)", fontWeight: 500, backdropFilter: "blur(4px)", background: "rgba(255,255,255,0.1)" }}>
-                Explore Experiences
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section> */}
-
-      {/* HERO WITH CINEMATIC VIDEO */}
-      <section className="hero-section">
-        <video autoPlay muted loop playsInline preload="auto" className="hero-video">
+      <section className="hero" id="home">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="hero-video"
+        >
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
+        <div className="hero-shade" />
 
-        <div className="hero-overlay" />
+        <div className="hero-content">
+          <span className="hero-kicker">
+            <span className="kicker-line" /> MPUMALANGA · SOUTH AFRICA
+          </span>
+          <h1>
+            Welcome to <br /><em>Zimu's Corner Resort.</em>
+          </h1>
+          <p>
+           A place to unwind, enjoy the moment, and create unforgettable memories.
+          </p>
+          <div className="hero-actions">
+            <Link to="/contact" className="button button-gold">
+              Enquire About Your Stay <ArrowRight size={17} />
+            </Link>
+            <button
+                className="hero-text-link"
+                type="button"
+                onClick={() => setContactModalOpen(true)}
+                style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}
+                >
+                Contact Us <ArrowRight size={15} />
+            </button>
+          </div>
+        </div>
 
-        <div className="container hero-content">
-          <Reveal direction="up">
-            <p className="hero-eyebrow">{resortInfo.location}</p>
-            <h1 className="hero-title">{resortInfo.tagline}</h1>
-            <p className="hero-description">{resortInfo.description}</p>
-            <div className="hero-actions">
-              <Link to="/contact" className="btn-hero-primary">
-                Plan Your Visit <ArrowRight size={18} />
-              </Link>
-              <Link to="/experiences" className="btn-hero-secondary">
-                Explore Experiences
-              </Link>
-            </div>
-          </Reveal>
+        <div className="hero-bottom">
+          <span>YOUR ESCAPE · YOUR VIBE</span>
+          <a href="#welcome" aria-label="Scroll to discover">
+            SCROLL TO DISCOVER <ChevronDown size={15} />
+          </a>
         </div>
       </section>
 
-
       {/* WELCOME / RESORT INTRODUCTION */}
-      <section className="welcome-section">
+      <section className="welcome-section" id="welcome">
         <div className="container">
           <div className="welcome-grid">
             
@@ -184,7 +203,7 @@ export default function HomePage() {
                     { type: "image", src: images.pic6 },
                     { type: "image", src: images.pic12 },
                     { type: "image", src: images.pic8 },
-                    { type: "video", src: "/video2.mp4" },
+                    { type: "video", src: "/eventVideo.mp4" },
                   ]} 
                 />
               </div>
@@ -198,7 +217,7 @@ export default function HomePage() {
 
 
             {/* DAY VISIT PRICING */}
-      <section style={{ padding: "6rem 0", background: "var(--ivory)" }}>
+      <section className="section-pad" style={{ background: "var(--ivory)" }}>
         <div className="container">
           <Reveal>
             <div style={{ textAlign: "center", marginBottom: "4rem" }}>
@@ -304,7 +323,7 @@ export default function HomePage() {
 
 
       {/* INCLUDED FACILITIES */}
-      <section style={{ background: "var(--forest)", color: "var(--ivory)", padding: "5rem 0" }}>
+      <section className="section-pad" style={{ background: "var(--forest)", color: "var(--ivory)" }}>
         <div className="container">
           <Reveal>
             <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -342,11 +361,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
             {/* EXPERIENCES PREVIEW (HOVER VIDEOS) */}
       <section className="home-exp-section">
         <div className="container">
-          
           <Reveal>
             <div className="home-exp-header">
               <p style={{ color: "var(--gold)", letterSpacing: "0.2em", textTransform: "uppercase", fontSize: "0.8rem", fontWeight: 600 }}>
@@ -359,30 +376,40 @@ export default function HomePage() {
           </Reveal>
 
           <div className="home-exp-grid">
-            {homeExperiences.map((exp, index) => (
+            {homeExperiences && homeExperiences.map((exp, index) => (
               <Reveal key={exp.title} delay={index * 150}>
-                <Link 
-                  to={exp.title.includes("Rooms") ? "/rooms" : exp.title.includes("Events") ? "/events" : "/contact"} 
+                <Link
+                  ref={(el) => (expCardRefs.current[index] = el)}
+                  to={exp.title.includes("Rooms") ? "/rooms" : exp.title.includes("Events") ? "/events" : "/contact"}
                   className="home-exp-card"
                   onMouseEnter={(e) => {
-                    // Play the video inside this specific card
+                    // Desktop hover: play this video
                     const video = e.currentTarget.querySelector("video");
-                    if (video) video.play().catch(() => {});
+                    if (video && video.src) video.play().catch(() => {});
                   }}
                   onMouseLeave={(e) => {
-                    // Pause the video when mouse leaves
+                    // Desktop hover end: pause
                     const video = e.currentTarget.querySelector("video");
                     if (video) {
                       video.pause();
-                      video.currentTime = 0; // Reset video
+                      video.currentTime = 0;
                     }
                   }}
                 >
-                  
                   {/* MEDIA (Image & Video) */}
                   <div className="home-exp-media">
                     <img src={images[exp.imageKey]} alt={exp.title} />
-                    <video src={exp.videoUrl} muted loop playsInline />
+                    {exp.videoUrl && (
+                      <video
+                        src={exp.videoUrl}
+                        muted
+                        loop
+                        playsInline
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    )}
                   </div>
 
                   {/* Gradient Overlay */}
@@ -399,12 +426,10 @@ export default function HomePage() {
                   <div className="home-exp-icon">
                     <ArrowRight size={20} />
                   </div>
-
                 </Link>
               </Reveal>
             ))}
           </div>
-
         </div>
       </section>
 
@@ -520,13 +545,18 @@ export default function HomePage() {
                       <span className="event-preview-badge">Upcoming</span>
                     </div>
 
-                    <div className="event-preview-body">
+                                       <div className="event-preview-body">
                       <div className="event-preview-date">
                         <Calendar size={16} />
                         <span>{event.date}</span>
                       </div>
                       <h3 className="event-preview-title">{event.title}</h3>
                       <p className="event-preview-desc">{event.description}</p>
+
+                      {/* GET A TICKET BUTTON */}
+                      <span className="event-preview-btn">
+                        Get a Ticket <ArrowRight size={16} />
+                      </span>
                     </div>
 
                   </Link>
@@ -538,8 +568,24 @@ export default function HomePage() {
         </div>
       </section>
 
+              {/* MORE THAN A PLACE TO STAY */}
+      <section
+        className="more-than-section"
+        style={{ backgroundImage: `url(${images.pool1})` }}
+      >
+        <div className="more-than-overlay" />
+        <div className="container more-than-content">
+          <Reveal>
+            <Heart size={23} strokeWidth={1.4} color="var(--gold)" />
+            <span className="more-than-eyebrow">MORE THAN A PLACE TO STAY</span>
+            <h2>Come as you are.<br /><em>Leave feeling restored.</em></h2>
+            <p>Make room for a getaway that feels a little more like you.</p>
+          </Reveal>
+        </div>
+      </section>
+
       {/* GALLERY PREVIEW */}
-      <section style={{ background: "var(--forest)", color: "var(--ivory)", padding: "5rem 0" }}>
+      <section className="section-pad" style={{ background: "var(--forest)", color: "var(--ivory)" }}>
         <div className="container">
           <Reveal>
             <div style={{ textAlign: "center", marginBottom: "3rem" }}>
@@ -585,7 +631,7 @@ export default function HomePage() {
       </section>
 
             {/* GUEST REVIEWS */}
-      <section style={{ padding: "6rem 0", background: "var(--ivory)" }}>
+      <section className="section-pad" style={{ background: "var(--ivory)" }}>
         <div className="container">
           <Reveal>
             <div style={{ textAlign: "center", marginBottom: "4rem" }}>
@@ -650,7 +696,7 @@ export default function HomePage() {
       </section>
 
             {/* VISIT INFO - CONTACT & MAP */}
-      <section style={{ padding: "6rem 0", background: "var(--white)" }}>
+      <section className="section-pad" style={{ background: "var(--white)" }}>
         <div className="container">
           <div style={{ display: "grid", gap: "3rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", alignItems: "stretch" }}>
             
@@ -729,6 +775,96 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+            {/* CONTACT MODAL */}
+      {contactModalOpen && (
+        <div
+          className="contact-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Contact Zimu's Corner"
+          onClick={() => setContactModalOpen(false)}
+        >
+          <div
+            className="contact-modal-card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              className="contact-modal-close"
+              type="button"
+              aria-label="Close contact options"
+              onClick={() => setContactModalOpen(false)}
+            >
+              <X size={20} />
+            </button>
+
+            <div className="contact-modal-icon">
+              <Phone size={26} strokeWidth={1.6} />
+            </div>
+
+            <span className="contact-modal-eyebrow">HOW WOULD YOU LIKE TO REACH US?</span>
+            <h3>Let's talk about<br /><em>your stay.</em></h3>
+            <p className="contact-modal-sub">
+              Choose whichever feels easiest — we're happy to help with dates, rates and room availability.
+            </p>
+
+            <div className="contact-modal-options">
+              <Link
+                to="/contact"
+                className="contact-option contact-option-primary"
+                onClick={() => setContactModalOpen(false)}
+              >
+                <span className="contact-option-icon">
+                  <Mail size={20} />
+                </span>
+                <span className="contact-option-copy">
+                  <strong>Send an Online Enquiry</strong>
+                  <small>We'll respond as soon as possible</small>
+                </span>
+                <ArrowRight size={16} />
+              </Link>
+
+              <Link
+                to="/contact"
+                className="contact-option"
+                onClick={() => setContactModalOpen(false)}
+              >
+                <span className="contact-option-icon">
+                  <MapPin size={20} />
+                </span>
+                <span className="contact-option-copy">
+                  <strong>Plan Your Visit</strong>
+                  <small>Directions, hours and arrival info</small>
+                </span>
+                <ArrowRight size={16} />
+              </Link>
+
+              <Link
+                to="/rooms"
+                className="contact-option"
+                onClick={() => setContactModalOpen(false)}
+              >
+                <span className="contact-option-icon">
+                  <BedDouble size={20} />
+                </span>
+                <span className="contact-option-copy">
+                  <strong>Explore Accommodation</strong>
+                  <small>View our rooms and rates</small>
+                </span>
+                <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            <button
+              className="contact-modal-dismiss"
+              type="button"
+              onClick={() => setContactModalOpen(false)}
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

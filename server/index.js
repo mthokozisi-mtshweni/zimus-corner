@@ -15,7 +15,12 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 // Replace app.use(cors()); with this:
 app.use(cors({
-  origin: process.env.CLIENT_URL, // This will be your Vercel URL
+  origin: [
+    "https://zimus-corner.vercel.app", 
+    "https://client-alpha-nine-94.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:5174"  // <-- Added for this specific dev session
+  ],
   credentials: true,
 }));
 app.use(express.json());

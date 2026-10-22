@@ -166,7 +166,7 @@
 }
 
 .hero-image {
-  /* background-image: url("https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=2200&q=85"); */
+
   background-position: center 54%;
   background-size: cover;
   transform: scale(1.015);
