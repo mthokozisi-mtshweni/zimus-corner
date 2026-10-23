@@ -317,3 +317,17 @@
     justify-content: center;
   }
 }
+
+/* ============================================================
+   MOBILE STACKING — SEARCH FORM
+   ============================================================ */
+@media (max-width: 640px) {
+  form > div {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  form > button {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+}

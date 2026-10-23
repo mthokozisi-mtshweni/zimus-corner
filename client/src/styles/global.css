@@ -133,3 +133,32 @@ button {
     --header-height: 64px; /* Mobile header is shorter */
   }
 }
+
+/* ============================================================
+   INPUT PLACEHOLDER STYLING
+   ============================================================ */
+input::placeholder,
+textarea::placeholder {
+  color: #999;
+  opacity: 1;
+  font-size: 16px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Mobile touch targets */
+@media (max-width: 640px) {
+  input[type="date"],
+  input[type="text"],
+  select {
+    font-size: 16px !important; /* Prevents iOS zoom */
+    min-height: 48px;           /* Comfortable tap target */
+  }
+}

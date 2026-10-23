@@ -72,7 +72,7 @@ export default function RoomsPage() {
       {/* SEARCH BAR */}
       <div className="container" style={{ marginTop: "-3rem", position: "relative", zIndex: 10 }}>
         <Reveal>
-                    <form
+                      <form
             onSubmit={handleSearch}
             style={{
               background: "var(--white)",
@@ -99,28 +99,34 @@ export default function RoomsPage() {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    pointerEvents: "none",   /* 👈 CRITICAL FIX */
+                    pointerEvents: "none",
                     zIndex: 1,
                   }}
                 />
                 <input
-                  type="date"
+                  type={searchData.checkIn ? "date" : "text"}
+                  placeholder="Select check-in date"
+                  onFocus={(e) => (e.target.type = "date")}
+                  onBlur={(e) => {
+                    if (!e.target.value) e.target.type = "text";
+                  }}
                   value={searchData.checkIn}
-                  onChange={(e) => setSearchData({ ...searchData, checkIn: e.target.value })}
+                  onChange={(e) =>
+                    setSearchData({ ...searchData, checkIn: e.target.value })
+                  }
                   style={{
                     width: "100%",
-                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    padding: "0.85rem 0.75rem 0.85rem 2.5rem",
                     borderRadius: "8px",
                     border: "1px solid #ccc",
                     outline: "none",
-                    fontSize: "16px",          /* 👈 Prevents iOS zoom */
-                    boxSizing: "border-box",   /* 👈 Prevents overflow */
-                    minWidth: 0,
-                    WebkitAppearance: "none",  /* 👈 Normalizes mobile display */
-                    appearance: "none",
+                    fontSize: "16px",
+                    boxSizing: "border-box",
                     color: "var(--charcoal)",
                     background: "white",
-                    touchAction: "manipulation",
+                    WebkitAppearance: "none",
+                    appearance: "none",
+                    minHeight: "48px",
                   }}
                 />
               </div>
@@ -145,23 +151,29 @@ export default function RoomsPage() {
                   }}
                 />
                 <input
-                  type="date"
+                  type={searchData.checkOut ? "date" : "text"}
+                  placeholder="Select check-out date"
+                  onFocus={(e) => (e.target.type = "date")}
+                  onBlur={(e) => {
+                    if (!e.target.value) e.target.type = "text";
+                  }}
                   value={searchData.checkOut}
-                  onChange={(e) => setSearchData({ ...searchData, checkOut: e.target.value })}
+                  onChange={(e) =>
+                    setSearchData({ ...searchData, checkOut: e.target.value })
+                  }
                   style={{
                     width: "100%",
-                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    padding: "0.85rem 0.75rem 0.85rem 2.5rem",
                     borderRadius: "8px",
                     border: "1px solid #ccc",
                     outline: "none",
                     fontSize: "16px",
                     boxSizing: "border-box",
-                    minWidth: 0,
-                    WebkitAppearance: "none",
-                    appearance: "none",
                     color: "var(--charcoal)",
                     background: "white",
-                    touchAction: "manipulation",
+                    WebkitAppearance: "none",
+                    appearance: "none",
+                    minHeight: "48px",
                   }}
                 />
               </div>
@@ -187,21 +199,22 @@ export default function RoomsPage() {
                 />
                 <select
                   value={searchData.guests}
-                  onChange={(e) => setSearchData({ ...searchData, guests: e.target.value })}
+                  onChange={(e) =>
+                    setSearchData({ ...searchData, guests: e.target.value })
+                  }
                   style={{
                     width: "100%",
-                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    padding: "0.85rem 0.75rem 0.85rem 2.5rem",
                     borderRadius: "8px",
                     border: "1px solid #ccc",
                     outline: "none",
                     background: "white",
                     fontSize: "16px",
                     boxSizing: "border-box",
-                    minWidth: 0,
+                    color: "var(--charcoal)",
                     WebkitAppearance: "none",
                     appearance: "none",
-                    color: "var(--charcoal)",
-                    touchAction: "manipulation",
+                    minHeight: "48px",
                   }}
                 >
                   <option value="1">1 Guest</option>
@@ -219,19 +232,28 @@ export default function RoomsPage() {
               style={{
                 background: "var(--gold)",
                 color: "var(--forest)",
-                padding: "0.8rem 2rem",
+                padding: "0.85rem 2rem",
                 borderRadius: "8px",
                 fontWeight: 600,
                 border: "none",
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: "0.5rem",
-                height: "46px",
-                fontSize: "16px",
+                fontSize: "15px",
+                minHeight: "48px",
+                width: "100%",
+                flex: "1 1 auto",
               }}
             >
-              {searchLoading ? <Loader2 size={18} className="animate-spin" /> : <><Search size={18} /> Check Availability</>}
+              {searchLoading ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <>
+                  <Search size={18} /> Check Availability
+                </>
+              )}
             </button>
           </form>
         </Reveal>
