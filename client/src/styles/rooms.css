@@ -293,3 +293,27 @@
     border-radius: 6px;
   }
 }
+
+/* ============================================================
+   MOBILE FIX FOR ROOMS SEARCH FORM
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Ensure the form fields stack neatly on small screens */
+  form input[type="date"],
+  form select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* Prevent horizontal overflow */
+  form > div {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+
+  /* Make the search button full-width on mobile */
+  form > button {
+    width: 100%;
+    justify-content: center;
+  }
+}

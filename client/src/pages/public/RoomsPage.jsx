@@ -72,47 +72,137 @@ export default function RoomsPage() {
       {/* SEARCH BAR */}
       <div className="container" style={{ marginTop: "-3rem", position: "relative", zIndex: 10 }}>
         <Reveal>
-          <form 
+                    <form
             onSubmit={handleSearch}
-            style={{ 
-              background: "var(--white)", borderRadius: "16px", padding: "1.5rem", 
-              boxShadow: "0 20px 40px -20px rgba(16,26,23,0.2)", display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "flex-end"
+            style={{
+              background: "var(--white)",
+              borderRadius: "16px",
+              padding: "1.5rem",
+              boxShadow: "0 20px 40px -20px rgba(16,26,23,0.2)",
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1rem",
+              alignItems: "flex-end",
             }}
           >
-            <div style={{ flex: "1 1 200px" }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>Check-in</label>
+            {/* CHECK-IN */}
+            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
+                Check-in
+              </label>
               <div style={{ position: "relative" }}>
-                <Calendar size={18} color="var(--gold)" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)" }} />
-                <input 
-                  type="date" 
-                  value={searchData.checkIn} 
-                  onChange={(e) => setSearchData({...searchData, checkIn: e.target.value})} 
-                  style={{ width: "100%", padding: "0.75rem 0.75rem 0.75rem 2.5rem", borderRadius: "8px", border: "1px solid #ccc", outline: "none" }} 
+                <Calendar
+                  size={18}
+                  color="var(--gold)"
+                  style={{
+                    position: "absolute",
+                    left: "1rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",   /* 👈 CRITICAL FIX */
+                    zIndex: 1,
+                  }}
+                />
+                <input
+                  type="date"
+                  value={searchData.checkIn}
+                  onChange={(e) => setSearchData({ ...searchData, checkIn: e.target.value })}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    outline: "none",
+                    fontSize: "16px",          /* 👈 Prevents iOS zoom */
+                    boxSizing: "border-box",   /* 👈 Prevents overflow */
+                    minWidth: 0,
+                    WebkitAppearance: "none",  /* 👈 Normalizes mobile display */
+                    appearance: "none",
+                    color: "var(--charcoal)",
+                    background: "white",
+                    touchAction: "manipulation",
+                  }}
                 />
               </div>
             </div>
 
-            <div style={{ flex: "1 1 200px" }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>Check-out</label>
+            {/* CHECK-OUT */}
+            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
+              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
+                Check-out
+              </label>
               <div style={{ position: "relative" }}>
-                <Calendar size={18} color="var(--gold)" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)" }} />
-                <input 
-                  type="date" 
-                  value={searchData.checkOut} 
-                  onChange={(e) => setSearchData({...searchData, checkOut: e.target.value})} 
-                  style={{ width: "100%", padding: "0.75rem 0.75rem 0.75rem 2.5rem", borderRadius: "8px", border: "1px solid #ccc", outline: "none" }} 
+                <Calendar
+                  size={18}
+                  color="var(--gold)"
+                  style={{
+                    position: "absolute",
+                    left: "1rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                  }}
+                />
+                <input
+                  type="date"
+                  value={searchData.checkOut}
+                  onChange={(e) => setSearchData({ ...searchData, checkOut: e.target.value })}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    outline: "none",
+                    fontSize: "16px",
+                    boxSizing: "border-box",
+                    minWidth: 0,
+                    WebkitAppearance: "none",
+                    appearance: "none",
+                    color: "var(--charcoal)",
+                    background: "white",
+                    touchAction: "manipulation",
+                  }}
                 />
               </div>
             </div>
 
-            <div style={{ flex: "1 1 150px" }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>Guests</label>
+            {/* GUESTS */}
+            <div style={{ flex: "1 1 150px", minWidth: 0 }}>
+              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
+                Guests
+              </label>
               <div style={{ position: "relative" }}>
-                <Users size={18} color="var(--gold)" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)" }} />
-                <select 
-                  value={searchData.guests} 
-                  onChange={(e) => setSearchData({...searchData, guests: e.target.value})} 
-                  style={{ width: "100%", padding: "0.75rem 0.75rem 0.75rem 2.5rem", borderRadius: "8px", border: "1px solid #ccc", outline: "none", background: "white" }}
+                <Users
+                  size={18}
+                  color="var(--gold)"
+                  style={{
+                    position: "absolute",
+                    left: "1rem",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                  }}
+                />
+                <select
+                  value={searchData.guests}
+                  onChange={(e) => setSearchData({ ...searchData, guests: e.target.value })}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem 0.75rem 0.75rem 2.5rem",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    outline: "none",
+                    background: "white",
+                    fontSize: "16px",
+                    boxSizing: "border-box",
+                    minWidth: 0,
+                    WebkitAppearance: "none",
+                    appearance: "none",
+                    color: "var(--charcoal)",
+                    touchAction: "manipulation",
+                  }}
                 >
                   <option value="1">1 Guest</option>
                   <option value="2">2 Guests</option>
@@ -122,7 +212,25 @@ export default function RoomsPage() {
               </div>
             </div>
 
-            <button type="submit" disabled={searchLoading} style={{ background: "var(--gold)", color: "var(--forest)", padding: "0.8rem 2rem", borderRadius: "8px", fontWeight: 600, border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem", height: "46px" }}>
+            {/* SEARCH BUTTON */}
+            <button
+              type="submit"
+              disabled={searchLoading}
+              style={{
+                background: "var(--gold)",
+                color: "var(--forest)",
+                padding: "0.8rem 2rem",
+                borderRadius: "8px",
+                fontWeight: 600,
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                height: "46px",
+                fontSize: "16px",
+              }}
+            >
               {searchLoading ? <Loader2 size={18} className="animate-spin" /> : <><Search size={18} /> Check Availability</>}
             </button>
           </form>
