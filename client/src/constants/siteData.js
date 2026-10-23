@@ -192,7 +192,7 @@ export const homeExperiences = [
     tag: "Chill & Unwind",
     description: "Grab a cold drink, watch the game, and enjoy the vibrant atmosphere of our on-site pub.",
     imageKey: "pic11", // Fallback image
-    videoUrl: "/pub.mp4", // Replace with your pub video
+    videoUrl: "/event.mp4", // Replace with your pub video
   },
   {
     title: "Luxury Rooms",
