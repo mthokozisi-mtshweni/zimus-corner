@@ -6,6 +6,7 @@ import { fetchRooms, searchAvailableRooms } from "../../services/api";
 import RoomGallery from "../../components/RoomGallery";
 import Reveal from "../../components/Reveal";
 import "../../styles/rooms.css";
+import DatePickerInput from "../../components/DatePickerInput";
 
 export default function RoomsPage() {
   // Search inputs
@@ -85,101 +86,24 @@ export default function RoomsPage() {
               alignItems: "flex-end",
             }}
           >
-            {/* CHECK-IN */}
-            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
-                Check-in
-              </label>
-              <div style={{ position: "relative" }}>
-                <Calendar
-                  size={18}
-                  color="var(--gold)"
-                  style={{
-                    position: "absolute",
-                    left: "1rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    pointerEvents: "none",
-                    zIndex: 1,
-                  }}
-                />
-                <input
-                  type={searchData.checkIn ? "date" : "text"}
-                  placeholder="Select check-in date"
-                  onFocus={(e) => (e.target.type = "date")}
-                  onBlur={(e) => {
-                    if (!e.target.value) e.target.type = "text";
-                  }}
-                  value={searchData.checkIn}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, checkIn: e.target.value })
-                  }
-                  style={{
-                    width: "100%",
-                    padding: "0.85rem 0.75rem 0.85rem 2.5rem",
-                    borderRadius: "8px",
-                    border: "1px solid #ccc",
-                    outline: "none",
-                    fontSize: "16px",
-                    boxSizing: "border-box",
-                    color: "var(--charcoal)",
-                    background: "white",
-                    WebkitAppearance: "none",
-                    appearance: "none",
-                    minHeight: "48px",
-                  }}
-                />
-              </div>
-            </div>
+            {/* CHECK-IN — custom date picker */}
+            <DatePickerInput
+              label="Check-in"
+              placeholder="Select check-in date"
+              value={searchData.checkIn}
+              onChange={(val) => setSearchData({ ...searchData, checkIn: val })}
+            />
 
-            {/* CHECK-OUT */}
-            <div style={{ flex: "1 1 200px", minWidth: 0 }}>
-              <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
-                Check-out
-              </label>
-              <div style={{ position: "relative" }}>
-                <Calendar
-                  size={18}
-                  color="var(--gold)"
-                  style={{
-                    position: "absolute",
-                    left: "1rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    pointerEvents: "none",
-                    zIndex: 1,
-                  }}
-                />
-                <input
-                  type={searchData.checkOut ? "date" : "text"}
-                  placeholder="Select check-out date"
-                  onFocus={(e) => (e.target.type = "date")}
-                  onBlur={(e) => {
-                    if (!e.target.value) e.target.type = "text";
-                  }}
-                  value={searchData.checkOut}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, checkOut: e.target.value })
-                  }
-                  style={{
-                    width: "100%",
-                    padding: "0.85rem 0.75rem 0.85rem 2.5rem",
-                    borderRadius: "8px",
-                    border: "1px solid #ccc",
-                    outline: "none",
-                    fontSize: "16px",
-                    boxSizing: "border-box",
-                    color: "var(--charcoal)",
-                    background: "white",
-                    WebkitAppearance: "none",
-                    appearance: "none",
-                    minHeight: "48px",
-                  }}
-                />
-              </div>
-            </div>
+            {/* CHECK-OUT — custom date picker, disables dates before check-in */}
+            <DatePickerInput
+              label="Check-out"
+              placeholder="Select check-out date"
+              value={searchData.checkOut}
+              onChange={(val) => setSearchData({ ...searchData, checkOut: val })}
+              minDate={searchData.checkIn || undefined}
+            />
 
-            {/* GUESTS */}
+            {/* GUESTS — unchanged */}
             <div style={{ flex: "1 1 150px", minWidth: 0 }}>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--forest)" }}>
                 Guests
@@ -199,9 +123,7 @@ export default function RoomsPage() {
                 />
                 <select
                   value={searchData.guests}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, guests: e.target.value })
-                  }
+                  onChange={(e) => setSearchData({ ...searchData, guests: e.target.value })}
                   style={{
                     width: "100%",
                     padding: "0.85rem 0.75rem 0.85rem 2.5rem",
@@ -212,8 +134,6 @@ export default function RoomsPage() {
                     fontSize: "16px",
                     boxSizing: "border-box",
                     color: "var(--charcoal)",
-                    WebkitAppearance: "none",
-                    appearance: "none",
                     minHeight: "48px",
                   }}
                 >

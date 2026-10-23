@@ -2023,3 +2023,14 @@
 .event-preview-card:hover .event-preview-btn svg {
   transform: translateX(4px);
 }
+
+@media (max-width: 640px) {
+  form > div {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  form > button {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+}
